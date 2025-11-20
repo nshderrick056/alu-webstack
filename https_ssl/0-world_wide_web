@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+# Function to audit a specific subdomain using dig and awk
+audit_subdomain() {
+    local domain="$1"
+    local sub="$2"
+    
+    # dig +noall +answer gets only the relevant line.
+    # awk -v passes the bash variable '$sub' into awk as 'sub'.
+    dig +noall +answer "$sub.$domain" | \
+    awk -v sub="$sub" '{print "The subdomain " sub " is a " $4 " record and points to " $5}'
+}
+
+# Main Script Logic
+domain="$1"
+subdomain="$2"
+
+if [ -z "$domain" ]; then
+    echo "Usage: $0  [subdomain]"
+    exit 1
+fi
+
+if [ -n "$subdomain" ]; then
+    # Audit the specific subdomain provided
+    audit_subdomain "$domain" "$subdomain"
+else
+    # Audit the required default list in specific order
+    audit_subdomain "$domain" "www"
+    audit_subdomain "$domain" "lb-01"
+    audit_subdomain "$domain" "web-01"
+    audit_subdomain "$domain" "web-02"
+fi

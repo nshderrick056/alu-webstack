@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 # Function to audit a specific subdomain using dig and awk
 audit_subdomain() {
     local domain="$1"
